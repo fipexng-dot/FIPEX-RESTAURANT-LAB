@@ -4,7 +4,7 @@
     import ProtectedRoute from './components/ProtectedRoute'
     import DashboardLayout from './layouts/DashboardLayout'
     import DashboardHome from './pages/dashboard/DashboardHome'
-
+import Menu from './pages/dashboard/Menu'
     function App() {
       return (
           <BrowserRouter>
@@ -21,6 +21,7 @@
                                                                                                                     }
                                                                                                                             >
                                                                                                                                       <Route index element={<DashboardHome />} />
+                                                                                                                                            <Route path="menu" element={<Menu />} />
                                                                                                                                               </Route>
                                                                                                                                                     </Routes>
                                                                                                                                                         </BrowserRouter>
