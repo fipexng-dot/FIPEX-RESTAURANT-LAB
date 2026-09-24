@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
-import Signup from './pages/auth/Signup'
+import OnboardingWizard from './pages/auth/OnboardingWizard'
 import Login from './pages/auth/Login'
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
                             <Link to="/login">Login</Link>
                                   </nav>
                                         <Routes>
-                                                <Route path="/signup" element={<Signup />} />
+                                                <Route path="/signup" element={<OnboardingWizard />} />
                                                         <Route path="/login" element={<Login />} />
                                                                 <Route path="/" element={<h1 style={{ padding: 24 }}>Restaurant SaaS</h1>} />
                                                                       </Routes>
@@ -19,3 +19,4 @@ function App() {
                                                                             }
 
                                                                             export default App
+                                                                            

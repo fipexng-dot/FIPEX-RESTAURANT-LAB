@@ -52,7 +52,7 @@
                                                                                                                                                                                                                            return
                                                                                                                                                                                                                                }
 
-                                                                                                                                                                                                                                   alert('Restaurant created! You can now log in.')
+                                                                                                                                                                                                                                   window.location.href = '/onboarding'
                                                                                                                                                                                                                                        setLoading(false)
                                                                                                                                                                                                                                          }
 
