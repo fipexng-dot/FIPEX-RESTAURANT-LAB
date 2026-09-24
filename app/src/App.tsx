@@ -5,6 +5,7 @@
     import DashboardLayout from './layouts/DashboardLayout'
     import DashboardHome from './pages/dashboard/DashboardHome'
 import Menu from './pages/dashboard/Menu'
+import RestaurantMenu from './pages/customer/RestaurantMenu'
     function App() {
       return (
           <BrowserRouter>
@@ -12,8 +13,8 @@ import Menu from './pages/dashboard/Menu'
                         <Route path="/signup" element={<OnboardingWizard />} />
                                 <Route path="/login" element={<Login />} />
                                         <Route path="/" element={<h1 style={{ padding: 24 }}>Restaurant SaaS</h1>} />
-                                                <Route
-                                                          path="/dashboard"
+                                                <Route path="/r/:restaurantSlug" element={<RestaurantMenu />} />
+                                                       <Route path="/dashboard"
                                                                     element={
                                                                                 <ProtectedRoute>
                                                                                               <DashboardLayout />
