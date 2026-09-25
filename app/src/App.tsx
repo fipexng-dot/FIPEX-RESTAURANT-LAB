@@ -7,6 +7,8 @@
 import Menu from './pages/dashboard/Menu'
 import QRManagement from './pages/dashboard/QRManagement'
 import RestaurantMenu from './pages/customer/RestaurantMenu'
+import Checkout from './pages/customer/Checkout'
+import Pay from './pages/customer/Pay'
     function App() {
       return (
           <BrowserRouter>
@@ -14,6 +16,9 @@ import RestaurantMenu from './pages/customer/RestaurantMenu'
                         <Route path="/signup" element={<OnboardingWizard />} />
                                 <Route path="/login" element={<Login />} />
                                         <Route path="/" element={<h1 style={{ padding: 24 }}>Restaurant SaaS</h1>} />
+                                        <Route path="/r/:restaurantSlug/checkout" element={<Checkout />} />
+                                        <Route path="/r/:restaurantSlug/pay" element={<Pay />} />
+                                        
                                                 <Route path="/r/:restaurantSlug" element={<RestaurantMenu />} />
                                                        <Route path="/dashboard"
                                                                     element={
