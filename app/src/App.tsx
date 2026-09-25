@@ -5,6 +5,7 @@
     import DashboardLayout from './layouts/DashboardLayout'
     import DashboardHome from './pages/dashboard/DashboardHome'
 import Menu from './pages/dashboard/Menu'
+import QRManagement from './pages/dashboard/QRManagement'
 import RestaurantMenu from './pages/customer/RestaurantMenu'
     function App() {
       return (
@@ -23,6 +24,7 @@ import RestaurantMenu from './pages/customer/RestaurantMenu'
                                                                                                                             >
                                                                                                                                       <Route index element={<DashboardHome />} />
                                                                                                                                             <Route path="menu" element={<Menu />} />
+                                                                                                                                            <Route path="tables" element={<QRManagement />} />
                                                                                                                                               </Route>
                                                                                                                                                     </Routes>
                                                                                                                                                         </BrowserRouter>
