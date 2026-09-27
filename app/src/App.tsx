@@ -9,6 +9,7 @@ import QRManagement from './pages/dashboard/QRManagement'
 import RestaurantMenu from './pages/customer/RestaurantMenu'
 import Checkout from './pages/customer/Checkout'
 import Pay from './pages/customer/Pay'
+import OrderConfirmation from './pages/customer/OrderConfirmation'
     function App() {
       return (
           <BrowserRouter>
@@ -18,6 +19,8 @@ import Pay from './pages/customer/Pay'
                                         <Route path="/" element={<h1 style={{ padding: 24 }}>Restaurant SaaS</h1>} />
                                         <Route path="/r/:restaurantSlug/checkout" element={<Checkout />} />
                                         <Route path="/r/:restaurantSlug/pay" element={<Pay />} />
+                                        <Route path="/r/:restaurantSlug/order-confirmation" element={<OrderConfirmation />} />
+
                                         
                                                 <Route path="/r/:restaurantSlug" element={<RestaurantMenu />} />
                                                        <Route path="/dashboard"
