@@ -11,6 +11,8 @@ import Checkout from './pages/customer/Checkout'
 import Pay from './pages/customer/Pay'
 import Kitchen from './pages/dashboard/Kitchen'
 import OrderConfirmation from './pages/customer/OrderConfirmation'
+import Orders from './pages/dashboard/Orders'
+import ComingSoon from './pages/dashboard/ComingSoon'
     function App() {
       return (
           <BrowserRouter>
@@ -35,6 +37,8 @@ import OrderConfirmation from './pages/customer/OrderConfirmation'
                                                                                                                                             <Route path="menu" element={<Menu />} />
                                                                                                                                             <Route path="tables" element={<QRManagement />} />
                                                                                                                                             <Route path="kitchen" element={<Kitchen />} />
+                                                                                                                                            <Route path="orders" element={<Orders />} />
+                                                                                                                                            <Route path="*" element={<ComingSoon />} />
                                                                                                                                               </Route>
                                                                                                                                                     </Routes>
                                                                                                                                                         </BrowserRouter>
