@@ -9,6 +9,7 @@ import QRManagement from './pages/dashboard/QRManagement'
 import RestaurantMenu from './pages/customer/RestaurantMenu'
 import Checkout from './pages/customer/Checkout'
 import Pay from './pages/customer/Pay'
+import Kitchen from './pages/dashboard/Kitchen'
 import OrderConfirmation from './pages/customer/OrderConfirmation'
     function App() {
       return (
@@ -20,7 +21,7 @@ import OrderConfirmation from './pages/customer/OrderConfirmation'
                                         <Route path="/r/:restaurantSlug/checkout" element={<Checkout />} />
                                         <Route path="/r/:restaurantSlug/pay" element={<Pay />} />
                                         <Route path="/r/:restaurantSlug/order-confirmation" element={<OrderConfirmation />} />
-
+                                    
                                         
                                                 <Route path="/r/:restaurantSlug" element={<RestaurantMenu />} />
                                                        <Route path="/dashboard"
@@ -33,6 +34,7 @@ import OrderConfirmation from './pages/customer/OrderConfirmation'
                                                                                                                                       <Route index element={<DashboardHome />} />
                                                                                                                                             <Route path="menu" element={<Menu />} />
                                                                                                                                             <Route path="tables" element={<QRManagement />} />
+                                                                                                                                            <Route path="kitchen" element={<Kitchen />} />
                                                                                                                                               </Route>
                                                                                                                                                     </Routes>
                                                                                                                                                         </BrowserRouter>
