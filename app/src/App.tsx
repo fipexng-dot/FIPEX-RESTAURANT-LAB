@@ -1,4 +1,4 @@
-    import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+    import { BrowserRouter, Routes, Route } from 'react-router-dom'
     import OnboardingWizard from './pages/auth/OnboardingWizard'
     import Login from './pages/auth/Login'
     import ProtectedRoute from './components/ProtectedRoute'
