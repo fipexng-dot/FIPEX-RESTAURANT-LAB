@@ -13,6 +13,9 @@ import Kitchen from './pages/dashboard/Kitchen'
 import OrderConfirmation from './pages/customer/OrderConfirmation'
 import Orders from './pages/dashboard/Orders'
 import ComingSoon from './pages/dashboard/ComingSoon'
+import Payments from './pages/dashboard/Payments'
+import Reports from './pages/dashboard/Reports'
+import Settings from './pages/dashboard/Settings'
     function App() {
       return (
           <BrowserRouter>
@@ -38,6 +41,9 @@ import ComingSoon from './pages/dashboard/ComingSoon'
                                                                                                                                             <Route path="tables" element={<QRManagement />} />
                                                                                                                                             <Route path="kitchen" element={<Kitchen />} />
                                                                                                                                             <Route path="orders" element={<Orders />} />
+                                                                                                                                            <Route path="payments" element={<Payments />} />
+                                                                                                                                            <Route path="reports" element={<Reports />} />
+                                                                                                                                            <Route path="settings" element={<Settings />} />
                                                                                                                                             <Route path="*" element={<ComingSoon />} />
                                                                                                                                               </Route>
                                                                                                                                                     </Routes>
