@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { supabase } from "../lib/supabaseClient";
+
 import {
   BACKGROUND_PATTERNS,
   type BackgroundKey,
 } from "../lib/backgroundPatterns";
+import { useOrderAlerts } from '../hooks/useOrderAlerts'
+import { OrderAlerts } from '../components/OrderAlerts'
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: "🏠", end: true },
@@ -40,6 +43,7 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [menuOpen, setMenuOpen] = useState(false);
+  const alerts = useOrderAlerts(profile?.restaurant_id)
   const [bgKey, setBgKey] = useState<BackgroundKey>("terracotta");
 
   useEffect(() => {
@@ -99,6 +103,13 @@ export default function DashboardLayout() {
         fontFamily: "system-ui, sans-serif",
       }}
     >
+    <OrderAlerts
+      alerts={alerts.alerts}
+        soundOn={alerts.soundOn}
+          enableSound={alerts.enableSound}
+            dismiss={alerts.dismiss}
+              onOpen={() => navigate('/dashboard/orders')}
+              />
       {isMobile && menuOpen && (
         <div
           onClick={() => setMenuOpen(false)}
@@ -157,6 +168,11 @@ export default function DashboardLayout() {
             >
               <span style={{ fontSize: 16 }}>{item.icon}</span>
               {item.label}
+              {(item.to === '/dashboard/orders' || item.to === '/dashboard/kitchen') && alerts.unseen > 0 && (
+                  <span style={{ marginLeft: 'auto', background: '#dc2626', color: '#fff', borderRadius: 12, fontSize: 12, fontWeight: 700, padding: '1px 8px' }}>
+                      {alerts.unseen}
+                        </span>
+                        )}
             </NavLink>
           ))}
         </nav>
@@ -256,7 +272,7 @@ export default function DashboardLayout() {
         </header>
 
         <main style={{ flex: 1, padding: 0, minWidth: 0 }}>
-          <Outlet />
+          <Outlet key={alerts.refreshKey} />
         </main>
       </div>
     </div>
