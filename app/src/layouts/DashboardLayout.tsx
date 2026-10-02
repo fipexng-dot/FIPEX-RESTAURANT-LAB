@@ -1,3 +1,6 @@
+import { useLocation } from 'react-router-dom'
+import { canAccess, sectionOf } from '../lib/permissions'
+import NoAccess from '../components/NoAccess'
 import { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -41,6 +44,7 @@ function useIsMobile() {
 export default function DashboardLayout() {
   const { profile } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation()
   const isMobile = useIsMobile();
   const [menuOpen, setMenuOpen] = useState(false);
   const alerts = useOrderAlerts(profile?.restaurant_id)
@@ -146,7 +150,7 @@ export default function DashboardLayout() {
         <nav
           style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1 }}
         >
-          {navItems.map((item) => (
+          {navItems.filter((item) => canAccess(profile?.role, sectionOf(item.to))).map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
@@ -272,7 +276,7 @@ export default function DashboardLayout() {
         </header>
 
         <main style={{ flex: 1, padding: 0, minWidth: 0 }}>
-          <Outlet key={alerts.refreshKey} />
+          {canAccess(profile?.role, sectionOf(pathname)) ? <Outlet key={alerts.refreshKey} /> : <NoAccess role={profile?.role} />}
         </main>
       </div>
     </div>

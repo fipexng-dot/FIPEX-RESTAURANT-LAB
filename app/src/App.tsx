@@ -15,6 +15,8 @@ import Orders from './pages/dashboard/Orders'
 import ComingSoon from './pages/dashboard/ComingSoon'
 import Payments from './pages/dashboard/Payments'
 import Reports from './pages/dashboard/Reports'
+import Notifications from './pages/dashboard/Notifications'
+import Staff from './pages/dashboard/Staff'
 import Settings from './pages/dashboard/Settings'
     function App() {
       return (
@@ -43,6 +45,8 @@ import Settings from './pages/dashboard/Settings'
                                                                                                                                             <Route path="orders" element={<Orders />} />
                                                                                                                                             <Route path="payments" element={<Payments />} />
                                                                                                                                             <Route path="reports" element={<Reports />} />
+            <Route path="notifications" element={<Notifications />} />
+            <Route path="staff" element={<Staff />} />
                                                                                                                                             <Route path="settings" element={<Settings />} />
                                                                                                                                             <Route path="*" element={<ComingSoon />} />
                                                                                                                                               </Route>
