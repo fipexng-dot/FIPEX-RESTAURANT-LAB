@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { supabase } from "../../lib/supabaseClient";
+import { ReceiptLink } from "./ReceiptLink";
 
 type OrderRow = {
   id: string;
@@ -310,7 +311,8 @@ export default function Orders() {
                     </span>
                   </div>
                 ))}
-                {(o.delivery_name || o.delivery_phone) && (
+                <ReceiptLink orderId={o.id} paid={o.payment_status === "success"} phone={o.delivery_phone} />
+{(o.delivery_name || o.delivery_phone) && (
                   <p style={{ fontSize: 13, marginTop: 8 }}>
                     Customer: {o.delivery_name}{" "}
                     {o.delivery_phone && `· ${o.delivery_phone}`}
