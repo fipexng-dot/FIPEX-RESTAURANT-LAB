@@ -1,112 +1,143 @@
-import { useEffect, useState } from 'react'
-import { useSearchParams, useParams, Link } from 'react-router-dom'
+import { useEffect, useState } from "react";
+import { useSearchParams, useParams, Link } from "react-router-dom";
 
 type OrderResult = {
-  order_number: string
-    order_type: string
-      status: string
-        payment_status: string
-          total: number
-          }
+  order_number: string;
+  order_type: string;
+  status: string;
+  payment_status: string;
+  total: number;
+};
 
-          type OrderItem = {
-            item_name: string
-              item_price: number
-                quantity: number
-                }
+type OrderItem = {
+  item_name: string;
+  item_price: number;
+  quantity: number;
+};
 
-                export default function OrderConfirmation() {
-                  const { restaurantSlug } = useParams()
-                    const [searchParams] = useSearchParams()
-                      const reference = searchParams.get('reference') || searchParams.get('trxref')
+export default function OrderConfirmation() {
+  const { restaurantSlug } = useParams();
+  const [searchParams] = useSearchParams();
+  const reference = searchParams.get("reference") || searchParams.get("trxref");
 
-                        const [loading, setLoading] = useState(true)
-                          const [success, setSuccess] = useState(false)
-                            const [order, setOrder] = useState<OrderResult | null>(null)
-                              const [items, setItems] = useState<OrderItem[]>([])
-                                const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true);
+  const [success, setSuccess] = useState(false);
+  const [order, setOrder] = useState<OrderResult | null>(null);
+  const [items, setItems] = useState<OrderItem[]>([]);
+  const [error, setError] = useState("");
 
-                                  useEffect(() => {
-                                      async function verify() {
-                                            if (!reference) {
-                                                    setError('Missing payment reference')
-                                                            setLoading(false)
-                                                                    return
-                                                                          }
+  useEffect(() => {
+    async function verify() {
+      if (!reference) {
+        setError("Missing payment reference");
+        setLoading(false);
+        return;
+      }
 
-                                                                                try {
-                                                                                        const res = await fetch(
-                                                                                                  'https://dpfgurqoogjintzqqzcx.supabase.co/functions/v1/verify-payment',
-                                                                                                            {
-                                                                                                                        method: 'POST',
-                                                                                                                                    headers: { 'Content-Type': 'application/json' },
-                                                                                                                                                body: JSON.stringify({ reference }),
-                                                                                                                                                          }
-                                                                                                                                                                  )
-                                                                                                                                                                          const data = await res.json()
+      try {
+        const res = await fetch(
+          "https://dpfgurqoogjintzqqzcx.supabase.co/functions/v1/verify-payment",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ reference }),
+          },
+        );
+        const data = await res.json();
 
-                                                                                                                                                                                  if (data.success) {
-                                                                                                                                                                                            setSuccess(true)
-                                                                                                                                                                                                      setOrder(data.order)
-                                                                                                                                                                                                                setItems(data.items)
-                                                                                                                                                                                                                        } else {
-                                                                                                                                                                                                                                  setError(data.error || 'Payment could not be verified')
-                                                                                                                                                                                                                                          }
-                                                                                                                                                                                                                                                } catch (err) {
-                                                                                                                                                                                                                                                        setError('Something went wrong verifying your payment')
-                                                                                                                                                                                                                                                              } finally {
-                                                                                                                                                                                                                                                                      setLoading(false)
-                                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                                                }
+        if (data.success) {
+          setSuccess(true);
+          setOrder(data.order);
+          setItems(data.items);
+        } else {
+          setError(data.error || "Payment could not be verified");
+        }
+      } catch (err) {
+        setError("Something went wrong verifying your payment");
+      } finally {
+        setLoading(false);
+      }
+    }
 
-                                                                                                                                                                                                                                                                                    verify()
-                                                                                                                                                                                                                                                                                      }, [reference])
+    verify();
+  }, [reference]);
 
-                                                                                                                                                                                                                                                                                        if (loading) {
-                                                                                                                                                                                                                                                                                            return (
-                                                                                                                                                                                                                                                                                                  <div style={{ padding: 24, textAlign: 'center' }}>
-                                                                                                                                                                                                                                                                                                          <p>Confirming your payment...</p>
-                                                                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                                                                    )
-                                                                                                                                                                                                                                                                                                                      }
+  if (loading) {
+    return (
+      <div style={{ padding: 24, textAlign: "center" }}>
+        <p>Confirming your payment...</p>
+      </div>
+    );
+  }
 
-                                                                                                                                                                                                                                                                                                                        if (!success) {
-                                                                                                                                                                                                                                                                                                                            return (
-                                                                                                                                                                                                                                                                                                                                  <div style={{ padding: 24, textAlign: 'center' }}>
-                                                                                                                                                                                                                                                                                                                                          <h1>Payment Not Confirmed</h1>
-                                                                                                                                                                                                                                                                                                                                                  <p style={{ color: 'red' }}>{error}</p>
-                                                                                                                                                                                                                                                                                                                                                          <Link to={`/r/${restaurantSlug}`}>Back to menu</Link>
-                                                                                                                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                                                                                                                    )
-                                                                                                                                                                                                                                                                                                                                                                      }
+  if (!success) {
+    return (
+      <div style={{ padding: 24, textAlign: "center" }}>
+        <h1>Payment Not Confirmed</h1>
+        <p style={{ color: "red" }}>{error}</p>
+        <Link to={`/r/${restaurantSlug}`}>Back to menu</Link>
+      </div>
+    );
+  }
 
-                                                                                                                                                                                                                                                                                                                                                                        return (
-                                                                                                                                                                                                                                                                                                                                                                            <div style={{ padding: 24 }}>
-                                                                                                                                                                                                                                                                                                                                                                                  <div style={{ textAlign: 'center', marginBottom: 24 }}>
-                                                                                                                                                                                                                                                                                                                                                                                          <h1>Order Confirmed 🎉</h1>
-                                                                                                                                                                                                                                                                                                                                                                                                  <p>Order #{order?.order_number}</p>
-                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+  return (
+    <div style={{ padding: 24 }}>
+      <div style={{ textAlign: "center", marginBottom: 24 }}>
+        <h1>Order Confirmed 🎉</h1>
+        <p>Order #{order?.order_number}</p>
+      </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                              <div style={{ marginBottom: 16 }}>
-                                                                                                                                                                                                                                                                                                                                                                                                                      {items.map((item, i) => (
-                                                                                                                                                                                                                                                                                                                                                                                                                                <div key={i} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                                                                                                                                                                                                                                                                                                                                                                                                            <span>{item.item_name} × {item.quantity}</span>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        <span>₦{item.item_price * item.quantity}</span>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                  </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ))}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, marginTop: 8 }}>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <span>Total</span>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <span>₦{order?.total}</span>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+      <div style={{ marginBottom: 16 }}>
+        {items.map((item, i) => (
+          <div
+            key={i}
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <span>
+              {item.item_name} × {item.quantity}
+            </span>
+            <span>₦{item.item_price * item.quantity}</span>
+          </div>
+        ))}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            fontWeight: 700,
+            marginTop: 8,
+          }}
+        >
+          <span>Total</span>
+          <span>₦{order?.total}</span>
+        </div>
+      </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <p>Order type: {order?.order_type}</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p>Status: {order?.status}</p>
+      <p>Order type: {order?.order_type}</p>
+      <p>Status: {order?.status}</p>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <Link to={`/r/${restaurantSlug}`} style={{ display: 'block', marginTop: 24, textAlign: 'center' }}>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              Back to menu
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </Link>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          )
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+      <Link
+        to={`/receipt/${reference}`}
+        style={{
+          display: "block",
+          marginTop: 20,
+          padding: 14,
+          textAlign: "center",
+          borderRadius: 12,
+          background: "#2b1b12",
+          color: "#fff",
+          fontWeight: 700,
+          textDecoration: "none",
+        }}
+      >
+        📄 View and download receipt
+      </Link>
+
+      <Link
+        to={`/r/${restaurantSlug}`}
+        style={{ display: "block", marginTop: 24, textAlign: "center" }}
+      >
+        Back to menu
+      </Link>
+    </div>
+  );
+}
