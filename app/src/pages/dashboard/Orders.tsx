@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { supabase } from "../../lib/supabaseClient";
 import { ReceiptLink } from "./ReceiptLink";
+import { MarkPaid } from "./counterparts/MarkPaid";
 
 type OrderRow = {
   id: string;
@@ -312,6 +313,7 @@ export default function Orders() {
                   </div>
                 ))}
                 <ReceiptLink orderId={o.id} paid={o.payment_status === "success"} phone={o.delivery_phone} />
+{o.payment_status !== "success" && <MarkPaid orderId={o.id} onDone={() => load(0)} />}
 {(o.delivery_name || o.delivery_phone) && (
                   <p style={{ fontSize: 13, marginTop: 8 }}>
                     Customer: {o.delivery_name}{" "}
