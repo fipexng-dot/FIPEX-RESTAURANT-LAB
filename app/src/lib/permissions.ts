@@ -7,12 +7,12 @@ export const ROLE_LABELS: Record<string, string> = {
 
 const ACCESS: Record<string, string[] | 'all'> = {
   restaurant_owner: 'all',
-  manager: ['dashboard', 'orders', 'menu', 'tables', 'customers', 'payments', 'kitchen', 'reports', 'notifications'],
-  cashier: ['orders', 'payments', 'customers', 'notifications'],
+  manager: ['dashboard', 'orders', 'counter', 'menu', 'tables', 'customers', 'payments', 'kitchen', 'reports', 'notifications'],
+  cashier: ['orders', 'counter', 'payments', 'customers', 'notifications'],
   kitchen: ['kitchen', 'orders', 'notifications'],
 }
 
-const ORDER = ['dashboard', 'orders', 'kitchen', 'payments', 'customers', 'menu', 'tables', 'reports', 'notifications', 'staff', 'settings']
+const ORDER = ['dashboard', 'orders', 'counter', 'kitchen', 'payments', 'customers', 'menu', 'tables', 'reports', 'notifications', 'staff', 'settings']
 
 export function sectionOf(pathname: string) {
   const parts = pathname.split('/').filter(Boolean)

@@ -19,6 +19,7 @@ import Notifications from "./pages/dashboard/Notifications";
 import Staff from "./pages/dashboard/Staff";
 import Settings from "./pages/dashboard/Settings";
 import Customers from "./pages/dashboard/Customers";
+import CounterOrder from "./pages/dashboard/CounterOrder";
 import Receipt from "./pages/receipt/Receipt";
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
           <Route path="customers" element={<Customers />} />
           <Route path="staff" element={<Staff />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="counter" element={<CounterOrder />} />
           <Route path="*" element={<ComingSoon />} />
         </Route>
       </Routes>
