@@ -120,6 +120,32 @@ function validate(value: unknown) {
   };
 }
 
+function lagosNow() {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Africa/Lagos", weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false,
+  }).formatToParts(new Date());
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
+  return {
+    day: get("weekday").slice(0, 3).toLowerCase(),
+    mins: (Number(get("hour")) % 24) * 60 + Number(get("minute")),
+  };
+}
+function toMins(s: string) {
+  const [h, m] = String(s).split(":").map(Number);
+  return h * 60 + (m || 0);
+}
+// deno-lint-ignore no-explicit-any
+function assertOpen(r: any) {
+  if (!r.use_opening_hours || !r.opening_hours) return;
+  const { day, mins } = lagosNow();
+  const d = r.opening_hours[day];
+  if (!d || d.closed) throw new HttpError("The restaurant is closed today", 400);
+  const o = toMins(d.open);
+  const c = toMins(d.close);
+  const isOpen = o <= c ? mins >= o && mins < c : mins >= o || mins < c;
+  if (!isOpen) throw new HttpError(`The restaurant is closed now. Open ${d.open} - ${d.close}`, 400);
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -141,10 +167,11 @@ Deno.serve(async (req) => {
 
     const { data: restaurant } = await supabase
       .from("restaurants")
-      .select("id,status,delivery_fee,takeaway_fee")
+      .select("id,status,delivery_fee,takeaway_fee,vat_percent,service_charge_percent,min_delivery_order,use_opening_hours,opening_hours")
       .eq("slug", values.slug)
       .maybeSingle();
     if (!restaurant) throw new HttpError("Restaurant not found", 404);
+    assertOpen(restaurant);
     if (restaurant.status === "closed") {
       throw new HttpError("Restaurant is currently closed");
     }
@@ -183,6 +210,9 @@ Deno.serve(async (req) => {
       ? Number(restaurant.takeaway_fee ?? 0)
       : 0;
 
+    if (values.orderType === "delivery" && subtotal < Number(restaurant.min_delivery_order ?? 0)) {
+      throw new HttpError(`Minimum delivery order is ₦${Number(restaurant.min_delivery_order).toLocaleString()}`, 400);
+    }
     let discount = 0;
     const { data: loyaltyData } = await supabase.rpc("get_loyalty_status", {
       p_restaurant_id: restaurant.id,
@@ -197,7 +227,10 @@ Deno.serve(async (req) => {
       }
     }
 
-    const total = Math.max(0, subtotal + deliveryFee + takeawayFee - discount);
+    const taxable = Math.max(0, subtotal - discount);
+    const serviceCharge = Math.round((taxable * Number(restaurant.service_charge_percent ?? 0)) / 100);
+    const vat = Math.round(((taxable + serviceCharge) * Number(restaurant.vat_percent ?? 0)) / 100);
+    const total = Math.max(0, taxable + serviceCharge + vat + deliveryFee + takeawayFee);
     if (total <= 0) throw new HttpError("Order total must be greater than zero");
 
     let customerId: string | null = null;
@@ -247,6 +280,8 @@ Deno.serve(async (req) => {
         source: "qr",
         subtotal,
         delivery_fee: deliveryFee,
+        vat_amount: vat,
+        service_charge_amount: serviceCharge,
         takeaway_fee: takeawayFee,
         discount,
         total,
