@@ -1,20 +1,14 @@
 import { useEffect, useState } from 'react'
+import { RANGES } from './reportData'
 import { supabase } from '../../../lib/supabaseClient'
 
 const LABELS: Record<string, string> = { cash: 'Cash', pos: 'POS', transfer: 'Transfer', online: 'Online' }
 
 function startOf(range: string): string | null {
+  const days = RANGES.find((r) => r.key === range)?.days ?? 7
   const d = new Date()
-  const m = /^(\d+)d$/.exec(range)
-  if (m) {
-    d.setDate(d.getDate() - Number(m[1]))
-    return d.toISOString()
-  }
-  if (range === 'today') {
-    d.setHours(0, 0, 0, 0)
-    return d.toISOString()
-  }
-  return null
+  const start = new Date(d.getFullYear(), d.getMonth(), d.getDate() - (days - 1))
+  return start.toISOString()
 }
 
 export function PaymentSplit({ rid, range }: { rid: string; range: string }) {
