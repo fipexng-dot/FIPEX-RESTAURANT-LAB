@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ringOnce, unlockAudio } from '../../hooks/orderRing'
+import { ringOnce, unlockAudio, setAlertStyle } from '../../hooks/orderRing'
 import { BACKGROUND_PATTERNS } from '../../lib/backgroundPatterns'
 import type { BackgroundKey } from '../../lib/backgroundPatterns'
 import { Card, Field, SaveBar, inputStyle } from './settingsKit'
@@ -46,7 +46,7 @@ export function AlertsSection({ row, save }: SectionProps) {
                                                                                                                                                                                                                                                                         <button
                                                                                                                                                                                                                                                                                 onClick={() => {
                                                                                                                                                                                                                                                                                           unlockAudio()
-                                                                                                                                                                                                                                                                                                    ringOnce()
+                                                                                                                                                                                                                                                                                                    setAlertStyle(style); ringOnce()
                                                                                                                                                                                                                                                                                                             }}
                                                                                                                                                                                                                                                                                                                     style={{ marginTop: 12, padding: '10px 16px', fontSize: 15, borderRadius: 10, border: '1.5px solid #d9d9d9', background: '#fff' }}
                                                                                                                                                                                                                                                                                                                           >

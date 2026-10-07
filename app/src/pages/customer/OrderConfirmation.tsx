@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabaseClient";
 import { useSearchParams, useParams, Link } from "react-router-dom";
 
 type OrderResult = {
@@ -25,6 +26,12 @@ export default function OrderConfirmation() {
   const [order, setOrder] = useState<OrderResult | null>(null);
   const [items, setItems] = useState<OrderItem[]>([]);
   const [error, setError] = useState("");
+  const [prep, setPrep] = useState<number | null>(null);
+  useEffect(() => {
+    if (!restaurantSlug) return;
+    supabase.from("restaurants").select("prep_time_minutes").eq("slug", restaurantSlug).maybeSingle()
+      .then(({ data }) => setPrep(data?.prep_time_minutes ?? null));
+  }, [restaurantSlug]);
 
   useEffect(() => {
     async function verify() {
@@ -84,6 +91,7 @@ export default function OrderConfirmation() {
     <div style={{ padding: 24 }}>
       <div style={{ textAlign: "center", marginBottom: 24 }}>
         <h1>Order Confirmed 🎉</h1>
+        {prep ? <p>Estimated preparation time: about {prep} minutes</p> : null}
         <p>Order #{order?.order_number}</p>
       </div>
 
