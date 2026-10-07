@@ -5,7 +5,7 @@ import { METHODS } from './counterApi'
 
 type Props = {
   subtotal: number
-  fees: { delivery_fee: number | null; takeaway_fee: number | null }
+  fees: { delivery_fee: number | null; takeaway_fee: number | null; vat_percent?: number | null; service_charge_percent?: number | null }
   busy: boolean
   error: string
   onClose: () => void
@@ -16,6 +16,10 @@ const TYPES = [
   { key: 'takeaway', label: 'Takeaway' },
   { key: 'delivery', label: 'Delivery' },
 ]
+const taxes = (p: Props) => {
+  const sc = Math.round((p.subtotal * (p.fees.service_charge_percent ?? 0)) / 100)
+  return sc + Math.round(((p.subtotal + sc) * (p.fees.vat_percent ?? 0)) / 100)
+}
 const field: CSSProperties = { width: '100%', padding: 10, border: '1px solid #ddd', borderRadius: 8, boxSizing: 'border-box' }
 const lab: CSSProperties = { fontSize: 13, fontWeight: 600, display: 'block', margin: '12px 0 4px' }
 const choice = (on: boolean): CSSProperties => ({ flex: 1, minWidth: '40%', padding: 10, borderRadius: 8, cursor: 'pointer', border: on ? '2px solid #c2410c' : '1px solid #ddd', background: on ? '#fff7ed' : '#fff' })
@@ -57,7 +61,7 @@ export function CheckoutPanel(p: Props) {
           ))}
         </div>
         {needRef && (<><label style={lab}>Reference (optional)</label><input style={field} value={reference} onChange={(e) => setReference(e.target.value)} /></>)}
-        <p style={{ fontWeight: 700, marginTop: 14 }}>Estimated total: {money(p.subtotal + fee)}</p>
+        <p style={{ fontWeight: 700, marginTop: 14 }}>Estimated total: {money(p.subtotal + fee + taxes(p))}</p>
         {p.error && <p style={{ color: 'crimson' }}>{p.error}</p>}
         <button disabled={p.busy} onClick={go} style={{ width: '100%', padding: 14, border: 'none', borderRadius: 10, background: '#c2410c', color: '#fff', fontWeight: 700 }}>
           {p.busy ? 'Saving...' : 'Confirm order'}

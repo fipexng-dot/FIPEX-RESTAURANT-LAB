@@ -9,7 +9,7 @@ import { CheckoutPanel } from './counterparts/CheckoutPanel'
 import { counterCall } from './counterparts/counterApi'
 import type { CounterResult } from './counterparts/counterApi'
 
-type Fees = { delivery_fee: number | null; takeaway_fee: number | null }
+type Fees = { delivery_fee: number | null; takeaway_fee: number | null; vat_percent?: number | null; service_charge_percent?: number | null }
 
 function Inner({ onNew }: { onNew: () => void }) {
   const { profile } = useAuth()
@@ -27,7 +27,7 @@ function Inner({ onNew }: { onNew: () => void }) {
   useEffect(() => {
     if (!rid) return
     Promise.all([
-      supabase.from('restaurants').select('delivery_fee,takeaway_fee').eq('id', rid).single(),
+      supabase.from('restaurants').select('delivery_fee,takeaway_fee,vat_percent,service_charge_percent').eq('id', rid).single(),
       supabase.from('menu_categories').select('*').eq('restaurant_id', rid).order('sort_order'),
       supabase.from('menu_items').select('*').eq('restaurant_id', rid).neq('availability', 'hidden'),
     ])

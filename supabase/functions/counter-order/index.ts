@@ -117,7 +117,7 @@ Deno.serve(async (req) => {
 
     const { data: rest } = await admin
       .from("restaurants")
-      .select("id,delivery_fee,takeaway_fee")
+      .select("id,delivery_fee,takeaway_fee,vat_percent,service_charge_percent")
       .eq("id", me.restaurant_id)
       .single();
     if (!rest) throw new HttpError("Restaurant not found", 404);
@@ -151,7 +151,9 @@ Deno.serve(async (req) => {
       orderType === "delivery" ? Number(rest.delivery_fee ?? 0) : 0;
     const takeawayFee =
       orderType === "takeaway" ? Number(rest.takeaway_fee ?? 0) : 0;
-    const total = subtotal + deliveryFee + takeawayFee;
+    const serviceCharge = Math.round((subtotal * Number(rest.service_charge_percent ?? 0)) / 100);
+    const vat = Math.round(((subtotal + serviceCharge) * Number(rest.vat_percent ?? 0)) / 100);
+    const total = subtotal + serviceCharge + vat + deliveryFee + takeawayFee;
 
     let customerId: string | null = null;
     if (phone) {
@@ -203,6 +205,8 @@ Deno.serve(async (req) => {
         created_by: me.id,
         subtotal,
         delivery_fee: deliveryFee,
+        vat_amount: vat,
+        service_charge_amount: serviceCharge,
         takeaway_fee: takeawayFee,
         discount: 0,
         total,
