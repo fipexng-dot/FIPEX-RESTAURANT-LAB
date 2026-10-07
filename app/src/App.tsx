@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import OnboardingWizard from "./pages/auth/OnboardingWizard";
+import SignupShell from "./pages/auth/SignupShell";
 import Login from "./pages/auth/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
@@ -25,7 +26,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/signup" element={<OnboardingWizard />} />
+        <Route path="/signup" element={<SignupShell />} />
         <Route path="/login" element={<Login />} />
         <Route path="/receipt/:key" element={<Receipt />} />
         <Route
