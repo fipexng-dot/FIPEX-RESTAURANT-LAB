@@ -44,7 +44,7 @@ export default function Checkout() {
 
       const { data } = await supabase
         .from('restaurants')
-        .select('id,name,primary_color,country_code,delivery_fee,takeaway_fee')
+        .select('id,name,primary_color,country_code,delivery_fee,takeaway_fee,vat_percent,service_charge_percent')
         .eq('slug', restaurantSlug)
         .single()
 
@@ -94,7 +94,11 @@ export default function Checkout() {
     }
   }
 
-  const total = Math.max(0, subtotal + deliveryFee + takeawayFee - discount)
+  const rx = restaurant as unknown as { vat_percent?: number | null; service_charge_percent?: number | null } | null
+  const taxable = Math.max(0, subtotal - discount)
+  const serviceCharge = Math.round((taxable * Number(rx?.service_charge_percent ?? 0)) / 100)
+  const vat = Math.round(((taxable + serviceCharge) * Number(rx?.vat_percent ?? 0)) / 100)
+  const total = Math.max(0, taxable + serviceCharge + vat + deliveryFee + takeawayFee)
   const canPay =
     name.trim().length >= 2 && phoneOk && (orderType !== 'delivery' || address.trim().length >= 5)
 
@@ -197,6 +201,8 @@ export default function Checkout() {
           orderType={orderType}
           subtotal={subtotal}
           deliveryFee={deliveryFee}
+        serviceCharge={serviceCharge}
+        vat={vat}
           takeawayFee={takeawayFee}
           discount={discount}
           total={total}
