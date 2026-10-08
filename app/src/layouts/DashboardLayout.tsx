@@ -144,7 +144,7 @@ export default function DashboardLayout() {
               letterSpacing: 0.3,
             }}
           >
-            Restaurant SaaS
+            FIPEX RESTAURANT LAB
           </h3>
         </div>
 

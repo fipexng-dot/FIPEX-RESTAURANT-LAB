@@ -30,7 +30,7 @@ function App() {
         <Route path="/receipt/:key" element={<Receipt />} />
         <Route
           path="/"
-          element={<h1 style={{ padding: 24 }}>Restaurant SaaS</h1>}
+          element={<h1 style={{ padding: 24 }}>FIPEX RESTAURANT LAB</h1>}
         />
         <Route path="/r/:restaurantSlug/checkout" element={<Checkout />} />
         <Route path="/r/:restaurantSlug/pay" element={<Pay />} />
