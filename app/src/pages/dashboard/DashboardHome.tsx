@@ -80,6 +80,21 @@ export default function DashboardHome() {
     setEditing(false)
   }
 
+  const [upBusy, setUpBusy] = useState(false)
+  const uploadLogo = async (file: File | undefined) => {
+    if (!file || !rid) return
+    if (file.size > 3000000) { alert('Please choose an image under 3 MB'); return }
+    setUpBusy(true)
+    const ext = (file.name.split('.').pop() || 'png').toLowerCase()
+    const path = `${rid}/logo-${Date.now()}.${ext}`
+    const up = await supabase.storage.from('restaurant-logos').upload(path, file, { upsert: true, contentType: file.type })
+    if (up.error) { alert(up.error.message); setUpBusy(false); return }
+    const url = supabase.storage.from('restaurant-logos').getPublicUrl(path).data.publicUrl
+    const { error } = await supabase.from('restaurants').update({ logo_url: url }).eq('id', rid)
+    if (error) alert(error.message)
+    else setRest({ ...(rest ?? {}), logo_url: url })
+    setUpBusy(false)
+  }
   const accent = String(rest?.primary_color || '#ea580c')
   const logo = typeof rest?.logo_url === 'string' ? rest.logo_url : ''
   const role = String(pf?.role || '')
@@ -96,7 +111,15 @@ export default function DashboardHome() {
     <div style={{ maxWidth: 900, margin: '0 auto', display: 'grid', gap: 14 }}>
       <style>{'@keyframes fxs{from{transform:translateX(100%)}to{transform:translateX(-100%)}}'}</style>
       <div style={{ background: `linear-gradient(135deg, ${accent}, #111)`, borderRadius: 20, padding: 20, color: '#fff', display: 'flex', gap: 14, alignItems: 'center' }}>
-        {logo ? <img src={logo} alt="" style={{ width: 68, height: 68, borderRadius: '50%', objectFit: 'cover', border: '3px solid #fff' }} /> : <div style={{ width: 68, height: 68, borderRadius: '50%', background: 'rgba(255,255,255,.2)', display: 'grid', placeItems: 'center', fontSize: 30 }}>🍽️</div>}
+<div style={{ position: 'relative' }}>
+{logo ? <img src={logo} alt="" style={{ width: 68, height: 68, borderRadius: '50%', objectFit: 'cover', border: '3px solid #fff' }} /> : <div style={{ width: 68, height: 68, borderRadius: '50%', background: 'rgba(255,255,255,.2)', display: 'grid', placeItems: 'center', fontSize: 30 }}>🍽️</div>}
+{canEdit && (
+            <label style={{ position: 'absolute', bottom: -4, right: -4, width: 28, height: 28, borderRadius: '50%', background: '#fff', color: '#111', display: 'grid', placeItems: 'center', cursor: 'pointer', fontSize: 14, boxShadow: '0 2px 6px rgba(0,0,0,.3)' }}>
+              {upBusy ? '…' : '📷'}
+              <input type="file" accept="image/*" hidden onChange={(e) => uploadLogo(e.target.files?.[0])} />
+            </label>
+          )}
+</div>
         <div>
           <div style={{ opacity: 0.85, fontSize: 14 }}>{greet()}{pf?.full_name ? `, ${String(pf.full_name)}` : ''} 👋</div>
           <div style={{ fontSize: 24, fontWeight: 800 }}>{String(rest?.name || 'Your restaurant')}</div>
