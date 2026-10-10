@@ -34,6 +34,7 @@ export default function Track() {
   useEffect(() => {
     let alive = true
     const load = async () => {
+      await supabase.rpc('auto_complete_deliveries')
       const { data } = await supabase.rpc('track_order', { p_key: key })
       if (!alive) return
       if (!data) { setMissing(true); return }
@@ -58,6 +59,14 @@ export default function Track() {
   const steps = STEPS[t.order_type] ?? STEPS.takeaway
   const cur = stepOf(t, steps.length)
   const accent = t.restaurant.primary_color || '#ea580c'
+  const confirm = async () => {
+    const { data } = await supabase.rpc('confirm_received', { p_key: key })
+    if (data) {
+      setT({ ...t, delivery_stage: 'delivered' })
+      setNote('Delivered. Enjoy your meal!')
+      last.current = steps.length - 1
+    }
+  }
   return (
     <div style={{ maxWidth: 480, margin: '0 auto', padding: 16, fontFamily: 'system-ui, sans-serif' }}>
       <div style={{ background: accent, color: '#fff', borderRadius: 16, padding: 16 }}>
@@ -74,6 +83,9 @@ export default function Track() {
           </div>
         ))}
       </div>
+      {t.order_type === 'delivery' && t.delivery_stage === 'out_for_delivery' && (
+        <button onClick={confirm} style={{ width: '100%', padding: 16, border: 'none', borderRadius: 14, background: '#16a34a', color: '#fff', fontSize: 17, fontWeight: 800, marginBottom: 12 }}>I have received my food</button>
+      )}
       {t.rider && (
         <div style={{ padding: 12, borderRadius: 12, background: '#fff', border: '1px solid #e7e0d8', marginBottom: 12 }}>
           <div style={{ fontSize: 13, color: '#78716c' }}>Your rider</div>

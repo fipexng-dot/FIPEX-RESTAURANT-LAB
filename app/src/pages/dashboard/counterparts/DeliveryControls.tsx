@@ -9,6 +9,7 @@ type Ex = {
   delivery_phone: string | null
   delivery_stage: string | null
   rider_id: string | null
+  delivered_by: string | null
   restaurant_id: string
   order_number: string | null
 }
@@ -19,7 +20,8 @@ export function DeliveryControls({ orderId }: { orderId: string }) {
   const [ex, setEx] = useState<Ex | null>(null)
   const [riders, setRiders] = useState<Rider[]>([])
   const load = useCallback(async () => {
-    const { data } = await supabase.from('orders').select('receipt_token,rider_token,delivery_name,delivery_phone,delivery_stage,rider_id,restaurant_id,order_number').eq('id', orderId).maybeSingle()
+    await supabase.rpc('auto_complete_deliveries')
+    const { data } = await supabase.from('orders').select('receipt_token,rider_token,delivery_name,delivery_phone,delivery_stage,rider_id,restaurant_id,order_number,delivered_by').eq('id', orderId).maybeSingle()
     if (!data) return
     setEx(data as Ex)
     const r = await supabase.from('riders').select('id,name,phone').eq('restaurant_id', data.restaurant_id).eq('active', true).order('name')
@@ -43,7 +45,7 @@ export function DeliveryControls({ orderId }: { orderId: string }) {
     await supabase.from('riders').insert({ restaurant_id: ex.restaurant_id, name, phone })
     await load()
   }
-  const label = stage === 'delivered' ? 'Delivered' : stage === 'out_for_delivery' ? 'Out for delivery' : 'Not dispatched yet'
+  const label = stage === 'delivered' ? 'Delivered' + (ex.delivered_by ? ` (by ${ex.delivered_by})` : '') : stage === 'out_for_delivery' ? 'Out for delivery' : 'Not dispatched yet'
   return (
     <div style={{ margin: '8px 0', padding: 10, border: '1px dashed #d6ccc2', borderRadius: 10 }}>
       <div style={{ fontWeight: 700 }}>🛵 Delivery: {label}</div>
@@ -54,7 +56,7 @@ export function DeliveryControls({ orderId }: { orderId: string }) {
       <button onClick={addRider} style={{ ...b, background: '#fff', border: '1px solid #ddd', color: '#1c1917' }}>+ Add rider</button>
       <div>
         {!stage && <button onClick={() => patch({ delivery_stage: 'out_for_delivery', out_for_delivery_at: new Date().toISOString() })} style={{ ...b, background: '#ea580c', color: '#fff' }}>Out for delivery</button>}
-        {stage === 'out_for_delivery' && <button onClick={() => patch({ delivery_stage: 'delivered', delivered_at: new Date().toISOString(), status: 'completed' })} style={{ ...b, background: '#16a34a', color: '#fff' }}>Delivered</button>}
+        {stage === 'out_for_delivery' && <button onClick={() => patch({ delivery_stage: 'delivered', delivered_at: new Date().toISOString(), delivered_by: 'staff', status: 'completed' })} style={{ ...b, background: '#16a34a', color: '#fff' }}>Delivered</button>}
         <a href={wa(ex.delivery_phone, `Hello${ex.delivery_name ? ' ' + ex.delivery_name : ''}! Track your order ${ex.order_number ?? ''} live here: ${trackUrl}`)} target="_blank" rel="noreferrer" style={{ ...b, background: '#16a34a', color: '#fff' }}>WhatsApp customer</a>
         {rider && <a href={wa(rider.phone, `New delivery ${ex.order_number ?? ''}. Open: ${riderUrl}`)} target="_blank" rel="noreferrer" style={{ ...b, background: '#1c1917', color: '#fff' }}>Send to rider</a>}
         <button onClick={() => navigator.clipboard.writeText(trackUrl)} style={{ ...b, background: '#fff', border: '1px solid #ddd', color: '#1c1917' }}>Copy tracking link</button>
