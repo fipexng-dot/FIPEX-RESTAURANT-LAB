@@ -17,6 +17,7 @@ const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: "🏠", end: true },
   { to: "/dashboard/orders", label: "Orders", icon: "🧾" },
   { to: '/dashboard/counter', label: 'Counter Order', icon: '🛎️' },
+  { to: '/dashboard/share', label: 'Share & Promote', icon: '📣' },
   { to: "/dashboard/menu", label: "Menu", icon: "🍽️" },
   { to: "/dashboard/tables", label: "Tables & QR", icon: "🪑" },
   { to: "/dashboard/customers", label: "Customers", icon: "👥" },
