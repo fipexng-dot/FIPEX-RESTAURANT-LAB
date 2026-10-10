@@ -3,6 +3,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { supabase } from "../../lib/supabaseClient";
 import { ReceiptLink } from "./ReceiptLink";
 import { MarkPaid } from "./counterparts/MarkPaid";
+import { DeliveryControls } from "./counterparts/DeliveryControls";
 
 type OrderRow = {
   id: string;
@@ -313,6 +314,7 @@ export default function Orders() {
                   </div>
                 ))}
                 <ReceiptLink orderId={o.id} paid={o.payment_status === "success"} phone={o.delivery_phone} />
+                {o.order_type === "delivery" && <DeliveryControls orderId={o.id} />}
 {o.payment_status !== "success" && <MarkPaid orderId={o.id} onDone={() => load(0)} />}
 {(o.delivery_name || o.delivery_phone) && (
                   <p style={{ fontSize: 13, marginTop: 8 }}>
