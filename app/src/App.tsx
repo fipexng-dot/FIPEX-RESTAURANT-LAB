@@ -1,3 +1,4 @@
+import Landing from "./pages/Landing";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SignupShell from "./pages/auth/SignupShell";
 import Login from "./pages/auth/Login";
@@ -30,7 +31,7 @@ function App() {
         <Route path="/receipt/:key" element={<Receipt />} />
         <Route
           path="/"
-          element={<h1 style={{ padding: 24 }}>FIPEX RESTAURANT LAB</h1>}
+          element={<Landing />}
         />
         <Route path="/r/:restaurantSlug/checkout" element={<Checkout />} />
         <Route path="/r/:restaurantSlug/pay" element={<Pay />} />
